@@ -26,9 +26,12 @@ export class TSVFileReader {
   }
 
   private parseCity(city: Cities, coordinates: string): City {
+    const [latitude, longitude] = this.splitString(coordinates, ';');
+
     return {
       name: city,
-      coordinates: this.splitString(coordinates, ', ')
+      latitude,
+      longitude
     };
   }
 

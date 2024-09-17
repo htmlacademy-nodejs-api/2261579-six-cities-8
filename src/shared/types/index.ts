@@ -26,7 +26,8 @@ export enum Amenities {
 
 export type City = {
   name: Cities,
-  coordinates: string[]
+  latitude: string,
+  longitude: string
 }
 
 export type Rent = {
@@ -46,4 +47,18 @@ export type Rent = {
   amenities: Amenities[],
   authorPath: string,
   commentCount: number
+};
+
+export type ResponseData = {
+  name: string[];
+  description: string[];
+  publicationDate: string[];
+  photos: string[]
+  city: City[];
+  previewImage: string[];
+  isPremium: boolean[];
+  isFavorite: boolean[];
+  housingType: string[];
+  authorPath: string[];
+  amenities: Amenities[]
 };
