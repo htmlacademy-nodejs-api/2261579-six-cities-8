@@ -1,9 +1,9 @@
-import { appendFile } from 'node:fs/promises';
 import { COMMAND_NAME } from '../../shared/contants/index.js';
 import { TSVFileGenerator } from '../../shared/libs/file-generator/index.js';
 import { Command } from './command.interface.js';
 import axios from 'axios';
 import { ResponseData } from '../../shared/types/index.js';
+import { TSVFileWriter } from '../../shared/libs/file-writer/index.js';
 
 export class GenerateCommand implements Command {
   private initialData: ResponseData | null = null;
@@ -23,12 +23,10 @@ export class GenerateCommand implements Command {
 
   private async write(filepath: string, offerCount: number) {
     const tsvFileGenerator = new TSVFileGenerator(this.initialData as ResponseData);
+    const tsvFileWriter = new TSVFileWriter(filepath);
+
     for (let i = 0; i < offerCount; i++) {
-      await appendFile(
-        filepath,
-        `${tsvFileGenerator.generate()}\n`,
-        { encoding: 'utf8' }
-      );
+      await tsvFileWriter.write(tsvFileGenerator.generate());
     }
   }
 
