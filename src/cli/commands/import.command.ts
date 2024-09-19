@@ -11,10 +11,8 @@ export class ImportCommand implements Command {
     const [filename] = parameters;
     const tsvFileReader = new TSVFileReader(filename);
 
-    tsvFileReader.read();
-
     try {
-      tsvFileReader.read();
+      await tsvFileReader.read();
       console.log(tsvFileReader.toArray());
     } catch (err) {
 

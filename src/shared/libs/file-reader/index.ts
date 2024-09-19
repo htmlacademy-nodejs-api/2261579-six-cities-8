@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { createReadStream } from 'node:fs';
 import { Amenities, Cities, City, Housing, Rent } from '../../types/index.js';
 
 export class TSVFileReader {
@@ -26,9 +26,12 @@ export class TSVFileReader {
   }
 
   private parseCity(city: Cities, coordinates: string): City {
+    const [latitude, longitude] = this.splitString(coordinates, ';');
+
     return {
       name: city,
-      coordinates: this.splitString(coordinates, ', ')
+      latitude,
+      longitude
     };
   }
 
@@ -81,8 +84,25 @@ export class TSVFileReader {
     return formatted;
   }
 
-  public read(): void {
-    this.rawData = readFileSync(this.filepath, 'utf-8');
+  public async read(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const stream = createReadStream(this.filepath, { encoding: 'utf-8', highWaterMark: 16 * 1024 });
+      let lineCount = 0;
+
+      stream.on('data', (chunk: string) => {
+        this.rawData += chunk;
+        lineCount += chunk.split('\n').length - 1;
+      });
+
+      stream.on('end', () => {
+        console.log(`${lineCount} lines were imported`);
+        resolve();
+      });
+
+      stream.on('error', (err) => {
+        reject(err);
+      });
+    });
   }
 
   public toArray(): Rent[] {
